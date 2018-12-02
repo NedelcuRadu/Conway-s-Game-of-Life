@@ -26,7 +26,7 @@ void gotoxy(int x, int y)
     SetConsoleCursorPosition(output, pos);
 }
 
-void constrGrid()
+void constrGrid(bool a[200][200])
 {  for(int i=1;i<=GRID;i++)
         for(int j=1;j<=GRID;j++)
             a[i][j]=0;
@@ -43,7 +43,7 @@ for(int j=-1;j<=+1;j++)
     return life-1;
     return life;                           //                A              B            A         TO DO: life in A
 }                                          //              0 0 0          0 X 0        0 0 0              live2 in B
-void liveOrDie1(bool b[200][200])          //              X X X    --->  0 X 0  --->  X X X             afis B
+void liveOrDie1()          //              X X X    --->  0 X 0  --->  X X X             afis B
 {for(int i=1;i<=GRID;i++)                  //              0 0 0          0 X 0        0 0 0              life in B
         for(int j=1;j<=GRID;j++)                                                           //            live1 in A
             {int k=life(a,i,j);                                                            //       system("CLS");
@@ -56,16 +56,16 @@ void liveOrDie1(bool b[200][200])          //              X X X    --->  0 X 0 
                 }
 
 }
-void liveOrDie2(bool b[200][200])
+void liveOrDie2()
 {for(int i=1;i<=GRID;i++)
         for(int j=1;j<=GRID;j++)
             {int k=life(b,i,j);
             if(k<2)
-                b[i][j]=0;
+                a[i][j]=0;
             if(k==3)
-                b[i][j]=1;
+                a[i][j]=1;
                 if(k>3)
-                    b[i][j]=0;
+                    a[i][j]=0;
                 }
 
 }
@@ -108,7 +108,8 @@ cout << "                         THE GAME OF life - Implementation in C++" << e
     cout << endl;
     cout<<"Grid size??"<<"\n";
     cin>>GRID;
-    constrGrid();
+    constrGrid(a);
+    constrGrid(b);
     cout<<"Select seeds number?"<<"\n";
     cin>>N;
     system("CLS");
@@ -133,16 +134,16 @@ Sleep(1000);
 
    while(true){cout<<"Generatia nr."<<++nr<<"\n";
 
-        liveOrDie1(b);
+        liveOrDie1();
          afis(b);
          Sleep(1000);
           gotoxy(0,0);
          cout<<"Generatia nr."<<++nr<<"\n";
-          liveOrDie2(a);
+          liveOrDie2();
          afis(a);
         Sleep(1000);
     gotoxy(0,0);
 
 }
-cout<<life(a,5,6);
+
 return 0;}
