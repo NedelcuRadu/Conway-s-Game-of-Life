@@ -1,4 +1,4 @@
-# Conway's Game Of Life by Nedelcu Radu
+# Conway's Game Of Life 
                                      --- Implementation in C++ ---
  Also known simply as life, is a cellular automaton devised by the British mathematician John Horton Conway in 1970.
    Rules:
