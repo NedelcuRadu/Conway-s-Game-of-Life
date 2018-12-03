@@ -14,4 +14,4 @@
    4. Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 	  
 You can add a 5th rule in order to obtain High Life, a similar game:   
-    5. Any dead cell with exactly six live neighbours becomes a live cell, as if by reproduction.
+     5. Any dead cell with exactly six live neighbours becomes a live cell, as if by reproduction.
