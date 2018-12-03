@@ -1,21 +1,29 @@
 #include <iostream>
-#include <windows.h>
 #include <fstream>
+#include <windows.h>
+
 
 using namespace std;
-ifstream in("Block.txt");
+ifstream in("R-pentomino.in");
 int GRID,N;
-bool a[200][200];
-bool b[200][200];
+bool **a;
+bool **b;
 
-void afis(bool a[200][200])
+void afis(bool **a)
 {
     for(int i=1;i<=GRID;i++)
         {for(int j=1;j<=GRID;j++)
-        if(a[i][j])
+        {
+            if(a[i][j])
         cout<<"*";
     else
-        cout<<"O";
+        if(i==1||i==GRID)
+        cout<<"-";
+    else
+    if(j==1||j==GRID)
+        cout<<"|";
+    else
+        cout<<(char) 254;}
         cout<<"\n";}
 
 }
@@ -26,13 +34,13 @@ void gotoxy(int x, int y)
     SetConsoleCursorPosition(output, pos);
 }
 
-void constrGrid(bool a[200][200])
+void constrGrid(bool **a)
 {  for(int i=1;i<=GRID;i++)
         for(int j=1;j<=GRID;j++)
             a[i][j]=0;
 
 }
-int life(bool a[200][200],int x, int y)
+int life(bool **a,int x, int y)
 {int life=0;
 if(x>1 && x<GRID && y<GRID && y>1)
 for(int i=-1;i<=+1;i++)
@@ -46,11 +54,16 @@ for(int j=-1;j<=+1;j++)
 void liveOrDie1()          //              X X X    --->  0 X 0  --->  X X X             afis B
 {for(int i=1;i<=GRID;i++)                  //              0 0 0          0 X 0        0 0 0              life in B
         for(int j=1;j<=GRID;j++)                                                           //            live1 in A
-            {int k=life(a,i,j);                                                            //       system("CLS");
+            {int k=life(a,i,j);
+            if(k==2)
+             b[i][j]=a[i][j];
+            else      //       system("CLS");
             if(k<2)                                                                        //       afis A
                 b[i][j]=0;
+                else
             if(k==3)
                 b[i][j]=1;
+                else
                 if(k>3)
                     b[i][j]=0;
                 }
@@ -62,25 +75,19 @@ void liveOrDie2()
             {int k=life(b,i,j);
             if(k<2)
                 a[i][j]=0;
+                else
             if(k==3)
                 a[i][j]=1;
+                else
                 if(k>3)
                     a[i][j]=0;
+                    else
+                        if(k==2)
+                        a[i][j]=b[i][j];
                 }
 
 }
-void nextgen1()
-{
-    for(int i=1;i<=GRID;i++)
-        for(int j=1;j<=GRID;j++)
-            b[i][j]=a[i][j];
-}
-void nextgen2()
-{for(int i=1;i<=GRID;i++)
-        for(int j=1;j<=GRID;j++)
-            a[i][j]=b[i][j];
 
-}
 
 
 int main()
@@ -106,44 +113,67 @@ cout << "                         THE GAME OF life - Implementation in C++" << e
     cout << "* - living cell" << endl;
     cout << "O - dead cell" << endl;
     cout << endl;
-    cout<<"Grid size??"<<"\n";
-    cin>>GRID;
+    cout<<"Load preset? Y/N"<<endl;
+    char q;
+    cin>>q;
+    if(q=='Y'|| q=='y')
+    {int x,y;
+    in>>GRID>>N;
+
+          a=new bool*[GRID];
+    b=new bool*[GRID];
+    for(int i=1;i<=GRID;i++)
+    {a[i]=new bool[GRID];
+    b[i]=new bool[GRID];
+    }
     constrGrid(a);
     constrGrid(b);
-    cout<<"Select seeds number?"<<"\n";
+    for(int i=1;i<=N;i++)
+        {in>>x;
+        in>>y;
+        a[x][y]=1;
+        cout<<x<<" "<<y<<endl;}
+
+        system("CLS");
+    }
+        else
+
+    {cout<<"Grid size?"<<"\n";
+    cin>>GRID;
+    a=new bool*[GRID];
+    b=new bool*[GRID];
+    for(int i=1;i<=GRID;i++)
+    {a[i]=new bool[GRID];
+    b[i]=new bool[GRID];
+    }
+    constrGrid(a);
+    constrGrid(b);
+    cout<<"How many seeds?"<<"\n";
     cin>>N;
     system("CLS");
 system("color c");
 for(int i=1;i<=N;i++)
 {afis(a);
-cout<<"Select seeds coord (x,y)"<<"\n";
+cout<<"Select coord (x,y) pt seed nr."<<i<<" (1 si "<<GRID<<" sunt pereti )"<<"\n";
     cin>>x>>y;
     a[x][y]=1;
 
     system("CLS");
-}
-/*while(in>>x>>y)
-{Sleep(10000);
-afis();
-cout<<"Select seeds coord (x,y)"<<"\n";
-    a[x][y]=1;
-Sleep(1000);
-    //system("CLS");
+}}
 
-}*/
-
-   while(true){cout<<"Generatia nr."<<++nr<<"\n";
+   while(true){system("color 17");
+   cout<<"Generatia nr."<<++nr<<"\n";
 
         liveOrDie1();
          afis(b);
-         Sleep(1000);
+         Sleep(300);
           gotoxy(0,0);
          cout<<"Generatia nr."<<++nr<<"\n";
           liveOrDie2();
          afis(a);
-        Sleep(1000);
+        Sleep(300);
     gotoxy(0,0);
+   }
 
-}
 
 return 0;}
