@@ -2,8 +2,7 @@
 #include <fstream>
 #include <windows.h>
 using namespace std;
-
-ifstream in("R-pentomino.in"); //Stream for seeds
+ifstream in("Toad.in");
 
 int GRID, N;
 bool **a, **b; //Dynamically Allocated Matrix
@@ -46,26 +45,25 @@ int life(bool **a, int x, int y) { //Returns neighbours
                     life++;
     if(a[x][y])
         return life - 1;
-    return life;                           
+    return life;
 }
-                                         
-void liveOrDie1() { //Applies rules to matrix A and keeps results in B      
-    for(int i = 1; i <= GRID; i++)           
-        for(int j = 1; j <= GRID; j++) {                                                         
+
+void liveOrDie1() { //Applies rules to matrix A and keeps results in B
+    for(int i = 1; i <= GRID; i++)
+        for(int j = 1; j <= GRID; j++) {
             int k = life(a, i, j);
             if(k == 2) // 2 neighbours, cell keeps current state
                 b[i][j] = a[i][j];
-            else      
-                if(k < 2)                                                                      
-                    b[i][j] = 0; //Less than 2 neighbours, cell dies
-                else if(k == 3)
-                    b[i][j] = 1;//3 neighbours, cell spawns
-                else if(k > 3)
-                    b[i][j] = 0; // More than 3 neighbours, cell dies 
+            else if(k < 2)
+                b[i][j] = 0; //Less than 2 neighbours, cell dies
+            else if(k == 3)
+                b[i][j] = 1;//3 neighbours, cell spawns
+            else if(k > 3)
+                b[i][j] = 0; // More than 3 neighbours, cell dies
         }
 }
 
-void liveOrDie2() { //Applies rules to matrix B and keeps results in A   
+void liveOrDie2() { //Applies rules to matrix B and keeps results in A
     for(int i = 1; i <= GRID; i++)
         for(int j = 1; j <= GRID; j++) {
             int k = life(b, i, j);
@@ -108,30 +106,49 @@ int main() {
     char q;
     cin >> q; //Get decision
     if(q == 'Y' || q == 'y') { //If preset
-        int x, y;
+        int l;
+        system("CLS");
+        cout << "Choose a preset: (Type number in parantheses)\n";
+        cout << char(175) << " Beacon (1)" << endl;
+        cout <<  char(175) << " Block (2)" << endl;
+        cout << char(175) << " Glider (3)" << endl;
+        cout <<  char(175) << " Pulsar (4)" << endl;
+        cout << char(175) << " R-pentomino (5)" << endl;
+        cout << char(175) << " Toad (6)" << endl;
+        cin >> l; //Get desired preset 
+        switch (l) { //Change stream
+        case 1: { 
+            ifstream in("Beacon.in");
+            break;
+        }
+        case 2: {
+            ifstream in("Block.in");
+            break;
+        }
+        case 3: {
+            ifstream in("Glider.in");
+            break;
+        }
+        case 4: {
+            ifstream in("Pulsar.in");
+            break;
+        }
+        case 5: {
+            ifstream in("R-pentomino.in");
+            break;
+        }
+        case 6: {
+            ifstream in("Toad.in");
+            break;
+        }
+        }
         in >> GRID >> N; //Read from stream
-     //Construct matrix
-        a = new bool*[GRID]; 
-        b = new bool*[GRID];
-        for(int i = 1; i <= GRID; i++) {
-            a[i] = new bool[GRID];
-            b[i] = new bool[GRID];
+        if(GRID == 0 || N == 0) {
+            cout << "INVALID SEED (Check input file and try again)";
+            return 0;
         }
-        constrGrid(a);
-        constrGrid(b);
-        
-        for(int i = 1; i <= N; i++) { //Get seeds
-            in >> x;
-            in >> y;
-            a[x][y] = 1;
-            cout << x << " " << y << endl;
-        }
-        
-        system("CLS"); //Clear screen
-    } else  {
-        cout << "Grid size?" << "\n"; 
-        cin >> GRID;
-        
+        //Construct matrix
+
         a = new bool*[GRID];
         b = new bool*[GRID];
         for(int i = 1; i <= GRID; i++) {
@@ -140,13 +157,34 @@ int main() {
         }
         constrGrid(a);
         constrGrid(b);
-        
+
+        for(int i = 1; i <= N; i++) { //Get seeds
+            in >> x;
+            in >> y;
+            a[x][y] = 1;
+            cout << x << " " << y << endl;
+        }
+
+        system("CLS"); //Clear screen
+    } else  {
+        cout << "Grid size?" << "\n";
+        cin >> GRID;
+
+        a = new bool*[GRID];
+        b = new bool*[GRID];
+        for(int i = 1; i <= GRID; i++) {
+            a[i] = new bool[GRID];
+            b[i] = new bool[GRID];
+        }
+        constrGrid(a);
+        constrGrid(b);
+
         cout << "How many seeds?" << "\n";
         cin >> N;
-        
+
         system("CLS"); //Clear screen and chance color
         system("color c");
-        
+
         for(int i = 1; i <= N; i++) { //Get seeds
             afis(a);
             cout << "Select coord (x,y) pt seed nr." << i << " (1 si " << GRID << " sunt pereti )" << "\n";
@@ -158,20 +196,20 @@ int main() {
     }
 
     while(true) { //Main game loop
-        system("color 17"); 
-        
+        system("color 17");
+
         cout << "Generatia nr." << ++nr << "\n";
         liveOrDie1();
         afis(b);
         Sleep(300);
         gotoxy(0, 0);
-        
+
         cout << "Generatia nr." << ++nr << "\n";
         liveOrDie2();
         afis(a);
         Sleep(300);
         gotoxy(0, 0);
-        
+
     }
     return 0;
 }
