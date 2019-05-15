@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1557877411 source:c:\users\elev\desktop\game of life\main.cpp
+	<iostream>
+	<fstream>
+	<windows.h>
+

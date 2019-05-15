@@ -2,14 +2,22 @@
 #include <fstream>
 #include <windows.h>
 using namespace std;
-ifstream in("Toad.in");
+ifstream in6("Toad.in");
+ifstream in1("Beacon.in");
+ifstream in2("Block.in");
+ifstream in3("Glider.in");
+ifstream in4("Pulsar.in");
+ifstream in5("R-pentomino.in");
 
 int GRID, N;
 bool **a, **b; //Dynamically Allocated Matrix
 
-void afis(bool **a) { //Display function
-    for(int i = 1; i <= GRID; i++) {
-        for(int j = 1; j <= GRID; j++) {
+void afis(bool **a)   //Display function
+{
+    for(int i = 1; i <= GRID; i++)
+    {
+        for(int j = 1; j <= GRID; j++)
+        {
             if(a[i][j])
                 cout << "*"; //Alive cells
             else if(i == 1 || i == GRID)
@@ -23,20 +31,23 @@ void afis(bool **a) { //Display function
     }
 
 }
-void gotoxy(int x, int y) { //Less flicker than system("CLS)
+void gotoxy(int x, int y)   //Less flicker than system("CLS)
+{
     COORD pos = { x, y };
     HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleCursorPosition(output, pos);
 }
 
-void constrGrid(bool **a) { //Initially grid is empty
+void constrGrid(bool **a)   //Initially grid is empty
+{
     for(int i = 1; i <= GRID; i++)
         for(int j = 1; j <= GRID; j++)
             a[i][j] = 0;
 
 }
 
-int life(bool **a, int x, int y) { //Returns neighbours
+int life(bool **a, int x, int y)   //Returns neighbours
+{
     int life = 0;
     if(x > 1 && x < GRID && y < GRID && y > 1) //Check constraints
         for(int i = -1; i <= +1; i++)
@@ -48,9 +59,11 @@ int life(bool **a, int x, int y) { //Returns neighbours
     return life;
 }
 
-void liveOrDie1() { //Applies rules to matrix A and keeps results in B
+void liveOrDie1()   //Applies rules to matrix A and keeps results in B
+{
     for(int i = 1; i <= GRID; i++)
-        for(int j = 1; j <= GRID; j++) {
+        for(int j = 1; j <= GRID; j++)
+        {
             int k = life(a, i, j);
             if(k == 2) // 2 neighbours, cell keeps current state
                 b[i][j] = a[i][j];
@@ -63,9 +76,11 @@ void liveOrDie1() { //Applies rules to matrix A and keeps results in B
         }
 }
 
-void liveOrDie2() { //Applies rules to matrix B and keeps results in A
+void liveOrDie2()   //Applies rules to matrix B and keeps results in A
+{
     for(int i = 1; i <= GRID; i++)
-        for(int j = 1; j <= GRID; j++) {
+        for(int j = 1; j <= GRID; j++)
+        {
             int k = life(b, i, j);
             if(k < 2)
                 a[i][j] = 0;
@@ -79,7 +94,9 @@ void liveOrDie2() { //Applies rules to matrix B and keeps results in A
 
 }
 
-int main() {
+
+int main()
+{
     int x, y, nr = 0;
     system("color B");
     cout << "                         THE GAME OF life - Implementation in C++" << endl;
@@ -105,8 +122,9 @@ int main() {
     cout << "Load preset? Y/N" << endl;
     char q;
     cin >> q; //Get decision
-    if(q == 'Y' || q == 'y') { //If preset
-        int l;
+    if(q == 'Y' || q == 'y')   //If preset
+    {
+        int l=-1;
         system("CLS");
         cout << "Choose a preset: (Type number in parantheses)\n";
         cout << char(175) << " Beacon (1)" << endl;
@@ -115,64 +133,190 @@ int main() {
         cout <<  char(175) << " Pulsar (4)" << endl;
         cout << char(175) << " R-pentomino (5)" << endl;
         cout << char(175) << " Toad (6)" << endl;
-        cin >> l; //Get desired preset 
-        switch (l) { //Change stream
-        case 1: { 
-            ifstream in("Beacon.in");
-            break;
-        }
-        case 2: {
-            ifstream in("Block.in");
-            break;
-        }
-        case 3: {
-            ifstream in("Glider.in");
-            break;
-        }
-        case 4: {
-            ifstream in("Pulsar.in");
-            break;
-        }
-        case 5: {
-            ifstream in("R-pentomino.in");
-            break;
-        }
-        case 6: {
-            ifstream in("Toad.in");
-            break;
-        }
-        }
-        in >> GRID >> N; //Read from stream
-        if(GRID == 0 || N == 0) {
-            cout << "INVALID SEED (Check input file and try again)";
-            return 0;
-        }
-        //Construct matrix
+        while(l<1 || l>6){
+        cin >> l; //Get desired preset
+        if(l==1)
+        {
+            in1 >> GRID >> N; //Read from stream
+            if(GRID == 0 || N == 0)
+            {
+                cout << "INVALID SEED (Check input file and try again)";
+                return 0;
+            }
+            a = new bool*[GRID];
+            b = new bool*[GRID];
+            for(int i = 1; i <= GRID; i++)
+            {
+                a[i] = new bool[GRID];
+                b[i] = new bool[GRID];
+            }
+            constrGrid(a);
+            constrGrid(b);
 
-        a = new bool*[GRID];
-        b = new bool*[GRID];
-        for(int i = 1; i <= GRID; i++) {
-            a[i] = new bool[GRID];
-            b[i] = new bool[GRID];
-        }
-        constrGrid(a);
-        constrGrid(b);
+            for(int i = 1; i <= N; i++)   //Get seeds
+            {
+                in1 >> x;
+                in1 >> y;
+                a[x][y] = 1;
+                cout << x << " " << y << endl;
+            }
 
-        for(int i = 1; i <= N; i++) { //Get seeds
-            in >> x;
-            in >> y;
-            a[x][y] = 1;
-            cout << x << " " << y << endl;
+            system("CLS"); //Clear screen
         }
+        else if(l==2)
+        {
+            in2 >> GRID >> N; //Read from stream
+            if(GRID == 0 || N == 0)
+            {
+                cout << "INVALID SEED (Check input file and try again)";
+                return 0;
+            }
+            a = new bool*[GRID];
+            b = new bool*[GRID];
+            for(int i = 1; i <= GRID; i++)
+            {
+                a[i] = new bool[GRID];
+                b[i] = new bool[GRID];
+            }
+            constrGrid(a);
+            constrGrid(b);
 
-        system("CLS"); //Clear screen
-    } else  {
+            for(int i = 1; i <= N; i++)   //Get seeds
+            {
+                in2 >> x;
+                in2 >> y;
+                a[x][y] = 1;
+                cout << x << " " << y << endl;
+            }
+
+            system("CLS"); //Clear screen
+        }
+        else if(l==3)
+        {
+            in3 >> GRID >> N; //Read from stream
+            if(GRID == 0 || N == 0)
+            {
+                cout << "INVALID SEED (Check input file and try again)";
+                return 0;
+            }
+            a = new bool*[GRID];
+            b = new bool*[GRID];
+            for(int i = 1; i <= GRID; i++)
+            {
+                a[i] = new bool[GRID];
+                b[i] = new bool[GRID];
+            }
+            constrGrid(a);
+            constrGrid(b);
+
+            for(int i = 1; i <= N; i++)   //Get seeds
+            {
+                in3 >> x;
+                in3 >> y;
+                a[x][y] = 1;
+                cout << x << " " << y << endl;
+            }
+
+            system("CLS"); //Clear screen}
+
+        }
+        else if(l==4)
+        {
+            in4 >> GRID >> N; //Read from stream
+            if(GRID == 0 || N == 0)
+            {
+                cout << "INVALID SEED (Check input file and try again)";
+                return 0;
+            }
+            a = new bool*[GRID];
+            b = new bool*[GRID];
+            for(int i = 1; i <= GRID; i++)
+            {
+                a[i] = new bool[GRID];
+                b[i] = new bool[GRID];
+            }
+            constrGrid(a);
+            constrGrid(b);
+
+            for(int i = 1; i <= N; i++)   //Get seeds
+            {
+                in4 >> x;
+                in4 >> y;
+                a[x][y] = 1;
+                cout << x << " " << y << endl;
+            }
+
+            system("CLS"); //Clear screen
+        }
+        else if(l==5)
+        {
+            in5 >> GRID >> N; //Read from stream
+            if(GRID == 0 || N == 0)
+            {
+                cout << "INVALID SEED (Check input file and try again)";
+                return 0;
+            }
+            a = new bool*[GRID];
+            b = new bool*[GRID];
+            for(int i = 1; i <= GRID; i++)
+            {
+                a[i] = new bool[GRID];
+                b[i] = new bool[GRID];
+            }
+            constrGrid(a);
+            constrGrid(b);
+
+            for(int i = 1; i <= N; i++)   //Get seeds
+            {
+                in5 >> x;
+                in5 >> y;
+                a[x][y] = 1;
+                cout << x << " " << y << endl;
+            }
+
+            system("CLS"); //Clear screen
+        }
+        else if(l==6)
+        {
+            in6 >> GRID >> N; //Read from stream
+            if(GRID == 0 || N == 0)
+            {
+                cout << "INVALID SEED (Check input file and try again)";
+                return 0;
+            }
+            a = new bool*[GRID];
+            b = new bool*[GRID];
+            for(int i = 1; i <= GRID; i++)
+            {
+                a[i] = new bool[GRID];
+                b[i] = new bool[GRID];
+            }
+            constrGrid(a);
+            constrGrid(b);
+
+            for(int i = 1; i <= N; i++)   //Get seeds
+            {
+                in6 >> x;
+                in6 >> y;
+                a[x][y] = 1;
+                cout << x << " " << y << endl;
+            }
+
+            system("CLS"); //Clear screen
+
+        }else{ cout<<"Invalid number, please input a valid number\n";
+        } }
+
+    }
+    else
+    {
         cout << "Grid size?" << "\n";
         cin >> GRID;
 
         a = new bool*[GRID];
         b = new bool*[GRID];
-        for(int i = 1; i <= GRID; i++) {
+        for(int i = 1; i <= GRID; i++)
+        {
             a[i] = new bool[GRID];
             b[i] = new bool[GRID];
         }
@@ -185,7 +329,8 @@ int main() {
         system("CLS"); //Clear screen and chance color
         system("color c");
 
-        for(int i = 1; i <= N; i++) { //Get seeds
+        for(int i = 1; i <= N; i++)   //Get seeds
+        {
             afis(a);
             cout << "Select coord (x,y) pt seed nr." << i << " (1 si " << GRID << " sunt pereti )" << "\n";
             cin >> x >> y;
@@ -195,7 +340,8 @@ int main() {
         }
     }
 
-    while(true) { //Main game loop
+    while(true)   //Main game loop
+    {
         system("color 17");
 
         cout << "Generatia nr." << ++nr << "\n";
